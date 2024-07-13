@@ -1,0 +1,76 @@
+#!/bin/bash
+
+cat=cat/s21_cat
+grep=grep/s21_grep
+
+echo "cat TEST and mem TEST! start:"
+for files in "common/TextFile.txt" "common/TextFile.txt common/TextFileOther.txt" "common/*.txt"
+do
+echo "-----------------------------"
+echo  "files: $files"
+for flags in '' -b -e -E -n -s -t -T
+do
+echo "-----------------------------"
+echo "cat Test flags: $flags"
+cat $flags $files > Test1.txt
+valgrind --tool=memcheck --leak-check=yes --log-file=Test3.txt $cat $flags $files > Test2.txt
+if diff Test1.txt Test2.txt ;
+then echo "RESULT: OK"
+else echo "RESULT: FAIL"
+fi
+grep -e "ERROR SUMMARY" Test3.txt
+rm Test1.txt
+rm Test2.txt
+rm Test3.txt
+done
+done
+echo "-----------------------------"
+echo "cat TEST COMPLATE!"
+echo "-----------------------------"
+echo "grep TEST and mem TEST! start:"
+echo "-----------------------------"
+for files in "common/TextFile.txt" "common/TextFile.txt common/TextFileOther.txt" "common/*.txt" "common/TextFile.txfft"
+do
+echo "-----------------------------"
+echo  "files: $files"
+for flags in -e -i -v -c -l -n -h -s -o -iv -in -cv -lv -ho 
+do
+echo "-----------------------------"
+echo "grep Test flags: $flags"
+grep $flags "F" $files > Test1.txt
+valgrind --tool=memcheck --leak-check=yes --log-file=Test3.txt $grep $flags "F" $files > Test2.txt
+if diff Test1.txt Test2.txt ;
+then echo "RESULT: OK"
+else echo "RESULT: NO"
+fi
+grep -e "ERROR SUMMARY" Test3.txt
+rm Test1.txt
+rm Test2.txt
+rm Test3.txt
+done
+done
+
+for files in "common/TestFile1.txt common/TextFile.txt" "common/TestFile2.txt common/TextFile.txt" "common/TestFile3.txt common/TextFile.txt" "common/TestFile1.txt common/TextFile.txt common/TextFileOther.txt" "common/TestFile2.txt common/TextFile.txt common/TextFileOther.txt" "common/TestFile3.txt common/TextFile.txt common/TextFileOther.txt"
+do
+echo "-----------------------------"
+echo  "files: $files"
+for flags in -f
+do
+echo "-----------------------------"
+echo "grep Test flags: $flags"
+grep $flags $files > Test1.txt
+valgrind --tool=memcheck --leak-check=yes --log-file=Test3.txt $grep $flags $files > Test2.txt
+if diff Test1.txt Test2.txt ;
+then echo "RESULT: OK"
+else echo "RESULT: NO"
+fi
+grep -e "ERROR SUMMARY" Test3.txt
+rm Test1.txt
+rm Test2.txt
+rm Test3.txt
+done
+done
+
+echo "-----------------------------"
+echo "grep TEST COMPLATE!"
+echo "-----------------------------"
